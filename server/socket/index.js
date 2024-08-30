@@ -18,19 +18,14 @@ const io = new Server(server, {
     }
 });
 
-/***
- * socket running at http://localhost:8080/
- */
-
-// Online user
+// Online users
 const onlineUser = new Set();
 
 io.on('connection', async (socket) => {
-    console.log("connect User ", socket.id);
+    console.log("User connected: ", socket.id);
 
     const token = socket.handshake.auth.token;
 
-    // Current user details
     let user;
     try {
         user = await getUserDetailsFromToken(token);
@@ -40,20 +35,22 @@ io.on('connection', async (socket) => {
         return;
     }
 
-    if (!user) {
-        console.error("User not found");
+    if (!user || !user._id) {
+        console.error("User not found or invalid user data");
         socket.disconnect();
         return;
     }
 
-    // Create a room
-    socket.join(user._id.toString());
-    onlineUser.add(user._id.toString());
+    const userIdString = user._id.toString();
+    
+    // Join the user's own room
+    socket.join(userIdString);
+    onlineUser.add(userIdString);
 
     io.emit('onlineUser', Array.from(onlineUser));
 
     socket.on('message-page', async (userId) => {
-        console.log('userId', userId);
+        console.log('User ID for message page:', userId);
         let userDetails;
         try {
             userDetails = await UserModel.findById(userId).select("-password");
@@ -92,16 +89,14 @@ io.on('connection', async (socket) => {
         socket.emit('message', getConversationMessage?.messages || []);
     });
 
-    // New message
     socket.on('new message', async (data) => {
         if (!data?.sender || !data?.receiver || !data?.msgByUserId) {
             console.error("Invalid message data:", data);
             return;
         }
 
-        let conversation;
         try {
-            conversation = await ConversationModel.findOne({
+            let conversation = await ConversationModel.findOne({
                 "$or": [
                     { sender: data.sender, receiver: data.receiver },
                     { sender: data.receiver, receiver: data.sender }
@@ -142,9 +137,8 @@ io.on('connection', async (socket) => {
         }
     });
 
-    // Sidebar
     socket.on('sidebar', async (currentUserId) => {
-        console.log("current user", currentUserId);
+        console.log("Current user ID for sidebar:", currentUserId);
 
         let conversation;
         try {
@@ -157,21 +151,24 @@ io.on('connection', async (socket) => {
         socket.emit('conversation', conversation);
     });
 
-    // Seen
     socket.on('seen', async (msgByUserId) => {
-        let conversation;
         try {
-            conversation = await ConversationModel.findOne({
+            const conversation = await ConversationModel.findOne({
                 "$or": [
                     { sender: user._id, receiver: msgByUserId },
                     { sender: msgByUserId, receiver: user._id }
                 ]
             });
 
-            const conversationMessageId = conversation?.messages || [];
+            if (!conversation) {
+                console.error("Conversation not found");
+                return;
+            }
+
+            const conversationMessageIds = conversation.messages || [];
 
             await MessageModel.updateMany(
-                { _id: { "$in": conversationMessageId }, msgByUserId: msgByUserId },
+                { _id: { "$in": conversationMessageIds }, msgByUserId: msgByUserId },
                 { "$set": { seen: true } }
             );
 
@@ -185,10 +182,11 @@ io.on('connection', async (socket) => {
         }
     });
 
-    // Disconnect
     socket.on('disconnect', () => {
-        onlineUser.delete(user._id.toString());
-        console.log('disconnect user ', socket.id);
+        if (user?._id) {
+            onlineUser.delete(user._id.toString());
+        }
+        console.log('User disconnected: ', socket.id);
     });
 });
 
