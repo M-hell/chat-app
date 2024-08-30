@@ -12,7 +12,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: process.env.FRONTEND_URL,
+        origin: ["https://chat-app-83p9.onrender.com", process.env.FRONTEND_URL],
+        methods: ["GET", "POST"],
         credentials: true
     }
 });
