@@ -13,7 +13,8 @@ const path=require('path');
 const cors=require('cors')
 app.use(cors(
     {
-        origin: process.env.FRONTEND_URL,
+        origin: ["https://chat-app-83p9.onrender.com", process.env.FRONTEND_URL],
+        methods: ["GET", "POST"],
         credentials: true
     }
 ))
