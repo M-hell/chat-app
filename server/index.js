@@ -7,7 +7,7 @@ const PORT=process.env.PORT || 3000
 
 //for deploying
 const path=require('path');
-const __dirname=path.resolve();
+// const __dirname=path.resolve();
 
 //cors setup
 const cors=require('cors')
