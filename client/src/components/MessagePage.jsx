@@ -171,12 +171,6 @@ const MessagePage = () => {
                      </p>
                   </div>
               </div>
-
-              <div >
-                    <button className='cursor-pointer hover:text-primary'>
-                      <HiDotsVertical/>
-                    </button>
-              </div>
           </header>
 
           {/***show all message */}
