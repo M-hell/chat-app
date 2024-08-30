@@ -40,7 +40,7 @@ const Home = () => {
 
   /***socket connection */
   useEffect(()=>{
-    const socketConnection = io(import.meta.env.VITE_REACT_APP_BACKEND_URL,{
+    const socketConnection = io('https://chat-app-83p9.onrender.com',{
       auth : {
         token : localStorage.getItem('token')
       },
