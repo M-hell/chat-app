@@ -153,7 +153,7 @@ const MessagePage = () => {
                   <Link to={"/"} className='lg:hidden'>
                       <FaAngleLeft size={25}/>
                   </Link>
-                  <div className='w-52 h-52 overflow-hidden'>
+                  <div>
                       <Avatar
                         width={50}
                         height={50}
