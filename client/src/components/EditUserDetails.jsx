@@ -91,7 +91,7 @@ const EditUserDetails = ({ onClose, user }) => {
                             id='name'
                             value={data.name}
                             onChange={handleOnChange}
-                            className='w-full py-1 px-2 focus:outline-primary border-0.5'
+                            className='w-full py-1 px-2 outline-primary border-0.5'
                         />
                     </div>
 
