@@ -6,6 +6,7 @@ import CheckPasswordPage from "../pages/CheckPasswordPage";
 import Home from "../pages/Home";
 import MessagePage from "../components/MessagePage";
 import AuthLayouts from "../layout";
+import Groupmsg from "../components/Groupmsg";
 // import Forgotpassword from "../pages/Forgotpassword";
 
 const router = createBrowserRouter([
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
                 {
                     path : ':userId',
                     element : <MessagePage/>
+                },
+                {
+                    path: 'groupchat',
+                    element: <Groupmsg />
                 }
             ]
         }

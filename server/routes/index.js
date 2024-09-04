@@ -8,6 +8,8 @@ const userDetails=require('../controllers/userDetails.js')
 const logout=require('../controllers/logout.js')
 const updateUserDetails=require('../controllers/updateUserDetails.js')
 const searchUser=require('../controllers/searchUser')
+const getGroupConv=require('../controllers/getGroupConv.js')
+const deleteAllGroupMessages=require('../controllers/deleteallgrpmsg.js')
 
 //user registering
 router.post('/register',registerUser)
@@ -29,6 +31,12 @@ router.post('/update-user',updateUserDetails)
 
 //search user
 router.post("/search-user",searchUser)
+
+//group conversation
+router.post("/get-grp-msgs",getGroupConv)
+
+//delete grp msgs
+router.post("/delete-all-grp-msg",deleteAllGroupMessages)
 
 
 

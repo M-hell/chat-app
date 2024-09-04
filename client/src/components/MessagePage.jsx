@@ -122,7 +122,8 @@ const MessagePage = () => {
           text: message.text,
           imageUrl: message.imageUrl,
           videoUrl: message.videoUrl,
-          msgByUserId: user?._id
+          msgByUserId: user?._id,
+          name: user.name
         });
         setMessage({
           text: "",

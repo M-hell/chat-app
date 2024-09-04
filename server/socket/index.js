@@ -49,6 +49,7 @@ io.on('connection', async (socket) => {
 
     io.emit('onlineUser', Array.from(onlineUser));
 
+    // Load group messages when group chat route is opened
     socket.on('message-page', async (userId) => {
         console.log('User ID for message page:', userId);
         let userDetails;
@@ -74,19 +75,36 @@ io.on('connection', async (socket) => {
         socket.emit('message-user', payload);
 
         let getConversationMessage;
+        // Fetch and emit group conversation messages
+        let getGroupConversationMsg;
         try {
+
             getConversationMessage = await ConversationModel.findOne({
                 "$or": [
                     { sender: user._id, receiver: userId },
                     { sender: userId, receiver: user._id }
                 ]
-            }).populate('messages').sort({ updatedAt: -1 });
+            }).populate({
+                path: 'messages',
+                match: { isgroupmsg: false },  // Filter for group messages only
+            })
+            .sort({ updatedAt: -1 });
+
+            getGroupConversationMsg = await ConversationModel.find({
+                isgroupconv: true
+            })
+            .populate({
+                path: 'messages',
+                match: { isgroupmsg: true },  // Filter for group messages only
+            })
+            .sort({ updatedAt: -1 });
+
         } catch (error) {
-            console.error("Error fetching conversation messages:", error);
+            console.error("Error fetching group conversation messages:", error);
             return;
         }
-
         socket.emit('message', getConversationMessage?.messages || []);
+        socket.emit('get-group-message', getGroupConversationMsg?.messages || []);
     });
 
     socket.on('new message', async (data) => {
@@ -115,14 +133,19 @@ io.on('connection', async (socket) => {
                 imageUrl: data.imageUrl,
                 videoUrl: data.videoUrl,
                 msgByUserId: data.msgByUserId,
+                name: data.name,
+                isgroupmsg: false
             });
 
             conversation.messages.push(message._id);
             await conversation.save();
 
             const updatedConversation = await ConversationModel.findById(conversation._id)
-                .populate('messages')
-                .sort({ updatedAt: -1 });
+            .populate({
+                path: 'messages',
+                match: { isgroupmsg: false }, 
+            })
+            .sort({ updatedAt: -1 });;
 
             io.to(data.sender).emit('message', updatedConversation?.messages || []);
             io.to(data.receiver).emit('message', updatedConversation?.messages || []);
@@ -134,6 +157,60 @@ io.on('connection', async (socket) => {
             io.to(data.receiver).emit('conversation', conversationReceiver);
         } catch (error) {
             console.error('Error handling new message:', error);
+        }
+    });
+
+
+
+    // Handle new group messages
+    socket.on('new-group-message', async (data) => {
+        if (!data?.sender || !data?.msgByUserId) {
+            console.error("Invalid message data:", data);
+            return;
+        }
+    
+        try {
+            // Find the group conversation
+            let conversation = await ConversationModel.findOne({
+                isgroupconv: true
+            });
+    
+            if (!conversation) {
+                conversation = await ConversationModel.create({
+                    isgroupconv: true
+                });
+            }
+    
+            // Create the new group message
+            const message = await MessageModel.create({
+                text: data.text,
+                imageUrl: data.imageUrl,
+                videoUrl: data.videoUrl,
+                msgByUserId: data.msgByUserId,
+                name: data.name,
+                isgroupmsg: true
+            });
+    
+            // Add the message to the conversation
+            conversation.messages.push(message._id);
+            await conversation.save();
+    
+            // Populate the conversation with only group messages
+            const updatedConversation = await ConversationModel.findById(conversation._id)
+                .populate({
+                    path: 'messages',
+                    match: { isgroupmsg: true },  // Filter for group messages only
+                })
+                .sort({ updatedAt: -1 });
+    
+            // Emit the message to all online users
+            const onlineUsersArray = Array.from(onlineUser);
+            onlineUsersArray.forEach(userId => {
+                io.to(userId).emit('get-group-message', updatedConversation?.messages || []);
+            });
+    
+        } catch (error) {
+            console.error('Error handling new group message:', error);
         }
     });
 
