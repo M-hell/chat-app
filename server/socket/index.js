@@ -49,7 +49,6 @@ io.on('connection', async (socket) => {
 
     io.emit('onlineUser', Array.from(onlineUser));
 
-    // Load group messages when group chat route is opened
     socket.on('message-page', async (userId) => {
         console.log('User ID for message page:', userId);
         let userDetails;
@@ -86,7 +85,7 @@ io.on('connection', async (socket) => {
                 ]
             }).populate({
                 path: 'messages',
-                match: { isgroupmsg: false },  // Filter for group messages only
+                match: { isgroupmsg: false },  // Filter for private msgs
             })
             .sort({ updatedAt: -1 });
 
