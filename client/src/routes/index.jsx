@@ -52,14 +52,7 @@ const router = createBrowserRouter([
             path: "groupchat",
             element: <Groupmsg />,
           },
-          {
-            path: "create-meeting-page",
-            element: <CreateMeeting />,
-          },
-          {
-            path: "new-meeting-page",
-            element: <MeetingRoom />
-          },
+          
         ],
       },
     ],

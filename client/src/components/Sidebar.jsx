@@ -12,7 +12,6 @@ import { FaImage } from "react-icons/fa6";
 import { FaVideo } from "react-icons/fa6";
 import { logout } from '../redux/userSlice';
 import GroupChat from './GroupChat';
-import VideoCall from './VideoCall';
 
 const Sidebar = () => {
     const user = useSelector(state => state?.user)
@@ -113,7 +112,7 @@ const Sidebar = () => {
                             </div>
                         )
                     }
-                    <VideoCall />
+                   
 
                     {/* groupchat */}
 
