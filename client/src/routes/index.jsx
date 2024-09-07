@@ -7,8 +7,7 @@ import Home from "../pages/Home";
 import MessagePage from "../components/MessagePage";
 import AuthLayouts from "../layout";
 import Groupmsg from "../components/Groupmsg";
-import CreateMeeting from "../components/CreateMeeting";
-import MeetingRoom from "../components/MeetingRoom";
+
 
 const router = createBrowserRouter([
   {
