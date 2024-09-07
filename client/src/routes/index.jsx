@@ -7,41 +7,63 @@ import Home from "../pages/Home";
 import MessagePage from "../components/MessagePage";
 import AuthLayouts from "../layout";
 import Groupmsg from "../components/Groupmsg";
-// import Forgotpassword from "../pages/Forgotpassword";
+import CreateMeeting from "../components/CreateMeeting";
+import MeetingRoom from "../components/MeetingRoom";
 
 const router = createBrowserRouter([
-{
-    path : "/",
-    element : <App/>,
-    children : [
-        {
-            path : "register",
-            element : <AuthLayouts><RegisterPage/></AuthLayouts>
-        },
-        {
-            path : 'email',
-            element : <AuthLayouts><CheckEmailPage/></AuthLayouts>
-        },
-        {
-            path : 'password',
-            element : <AuthLayouts><CheckPasswordPage/></AuthLayouts>
-        },
-        {
-            path : "",
-            element : <Home/>,
-            children : [
-                {
-                    path : ':userId',
-                    element : <MessagePage/>
-                },
-                {
-                    path: 'groupchat',
-                    element: <Groupmsg />
-                }
-            ]
-        }
-    ]
-}
-])
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "register",
+        element: (
+          <AuthLayouts>
+            <RegisterPage />
+          </AuthLayouts>
+        ),
+      },
+      {
+        path: "email",
+        element: (
+          <AuthLayouts>
+            <CheckEmailPage />
+          </AuthLayouts>
+        ),
+      },
+      {
+        path: "password",
+        element: (
+          <AuthLayouts>
+            <CheckPasswordPage />
+          </AuthLayouts>
+        ),
+      },
+      
+      {
+        path: "",
+        element: <Home />,
+        children: [
+          {
+            path: ":userId",
+            element: <MessagePage />,
+          },
+          {
+            path: "groupchat",
+            element: <Groupmsg />,
+          },
+          {
+            path: "create-meeting-page",
+            element: <CreateMeeting />,
+          },
+          {
+            path: "new-meeting-page",
+            element: <MeetingRoom />
+          },
+        ],
+      },
+    ],
+  },
+]);
 
-export default router
+export default router;

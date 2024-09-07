@@ -11,7 +11,7 @@ const GroupChat = () => {
                 height={50}
                 name={"Group Chat"}
                 userId={"no_id"}
-                imageUrl={"https://www.freeiconspng.com/thumbs/group-png/group-of-people-icon-22.png"}
+                imageUrl={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxV4MxPN7FpFp8OmDqt9XPB8UvBwIB0Vy82g&s"}
             />
         </div>
         <div>
